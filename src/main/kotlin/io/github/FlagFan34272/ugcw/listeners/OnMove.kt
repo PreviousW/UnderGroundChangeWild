@@ -11,15 +11,13 @@ class OnMove: Listener {
     fun PlayerMoveEvent.onMove() {
         if (hasChangedBlock()) {
             if (from.x == to.x &&  from.z == to.z) return
-            val location = Location(player.world, player.location.x, player.location.y - 1.0, player.location.z)
-            if (location.block.type == Material.AIR) return
-            if (location.block.type == Material.WATER) return
-            
-            val (blocks, nonBlocks) = Material.values().partition {
-                it.isBlock
+            Location(player.world, player.location.x, player.location.y - 1.0, player.location.z).apply {
+                if (block.type == Material.AIR) return
+                if (block.type == Material.WATER) return
+                val (blocks, nonBlocks) = Material.values().partition { it.isBlock }
+                block.blockData = blocks.shuffled()[0].createBlockData()
+                block.type = blocks.shuffled()[0]
             }
-            location.block.blockData = blocks.shuffled()[0].createBlockData()
-            location.block.type = blocks.shuffled()[0]
         }
     }
 }
